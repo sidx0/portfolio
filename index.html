@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Siddhant Bayas — Full Stack Developer</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #FAF8F3;
+  color: #111;
+  line-height: 1.6;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+
+section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  padding: 60px 0;
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+/* Splash Screen */
+.splash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #FAF8F3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  transition: opacity 0.6s ease;
+  cursor: pointer;
+}
+
+.splash.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.greeting {
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #111;
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.greeting.changing {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Main Content */
+.main-content {
+  padding-top: 120px;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  position: relative;
+}
+
+/* Fixed Navigation */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #FAF8F3;
+  z-index: 100;
+  border-bottom: 1px solid #E5E1D8;
+  padding: 30px 0;
+}
+
+nav .nav-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav h2 {
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+nav ul {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+}
+
+nav a {
+  text-decoration: none;
+  color: #111;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+nav a:hover {
+  opacity: 0.6;
+}
+
+.cv-pill {
+  padding: 10px 20px;
+  background: #111;
+  color: white !important;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 25px;
+  transition: 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cv-pill:hover {
+  background: #6B4423;
+  opacity: 1 !important;
+  transform: translateY(-2px);
+}
+
+.cv-pill i {
+  font-size: 0.9rem;
+}
+
+/* Mobile Navigation Hidden */
+@media (max-width: 768px) {
+  nav {
+    display: none;
+  }
+  
+  .main-content {
+    padding-top: 0 !important;
+  }
+  
+  body {
+    padding-top: 0;
+  }
+}
+
+.hero {
+  position: relative;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.hero-text {
+  position: relative;
+  z-index: 1;
+}
+
+.hero h1 {
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.hero h3 {
+  margin-top: 30px;
+  font-weight: 400;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.hero p {
+  margin-top: 20px;
+  max-width: 500px;
+  color: #555;
+}
+
+.hero-box {
+  background: #F5F2EB;
+  height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.2rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #E5E1D8;
+}
+
+/* Rotating Decorative Elements */
+.rotating-star,
+.rotating-asterisk {
+  position: absolute;
+  font-size: 4rem;
+  color: #6B4423;
+  opacity: 0.2;
+  pointer-events: none;
+  transition: transform 0.1s ease-out;
+}
+
+.star-1 {
+  top: 15%;
+  left: 20%;
+  font-size: 5rem;
+}
+
+.star-2 {
+  bottom: 20%;
+  right: 15%;
+  font-size: 4.5rem;
+}
+
+.asterisk-1 {
+  top: 50%;
+  right: 25%;
+  font-size: 5.5rem;
+}
+
+.asterisk-2 {
+  bottom: 40%;
+  left: 18%;
+  font-size: 4rem;
+}
+
+/* Interactive Floating Elements */
+.floating-element {
+  position: absolute;
+  font-size: 3rem;
+  color: #6B4423;
+  opacity: 0.15;
+  pointer-events: none;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+.float-1 {
+  top: 20%;
+  right: 10%;
+  animation-delay: 0s;
+}
+
+.float-2 {
+  bottom: 30%;
+  left: 8%;
+  animation-delay: 1s;
+}
+
+.float-3 {
+  top: 60%;
+  right: 12%;
+  animation-delay: 2s;
+}
+
+/* Mouse follow effect container */
+.mouse-follower {
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  border: 2px solid #6B4423;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.15s ease;
+  z-index: 9999;
+  mix-blend-mode: difference;
+}
+
+.mouse-follower.active {
+  opacity: 0.5;
+}
+
+.section-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 60px;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  max-width: 600px;
+}
+
+.project-card {
+  background: white;
+  padding: 60px 40px;
+  transition: 0.3s ease;
+  border: 1px solid #E5E1D8;
+  text-align: center;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.project-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.project-card p {
+  color: #666;
+}
+
+.skills-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+  max-width: 900px;
+}
+
+.skill {
+  background: white;
+  padding: 30px 20px;
+  border: 1px solid #E5E1D8;
+  font-weight: 500;
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.skill:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.skill i {
+  display: block;
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: #6B4423;
+}
+
+.contact {
+  text-align: center;
+}
+
+.contact h1 {
+  font-size: 4rem;
+  font-weight: 900;
+  margin-bottom: 40px;
+  letter-spacing: -0.02em;
+}
+
+.contact-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 30px;
+  background: #111;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s ease;
+  border: 1px solid #111;
+}
+
+.contact-btn:hover {
+  background: white;
+  color: #111;
+  transform: translateY(-2px);
+}
+
+.contact-btn i {
+  font-size: 1.2rem;
+}
+
+@media (max-width: 900px) {
+  nav {
+    padding: 20px 0;
+  }
+
+  .nav-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  nav ul {
+    gap: 20px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 {
+    font-size: 3.5rem;
+  }
+
+  .contact h1 {
+    font-size: 2.5rem;
+  }
+
+  .greeting {
+    font-size: 2.5rem;
+  }
+
+  .rotating-star,
+  .rotating-asterisk {
+    font-size: 3rem;
+  }
+
+  .star-1,
+  .asterisk-1 {
+    font-size: 3.5rem;
+  }
+  
+  .floating-element {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  section {
+    min-height: 100vh;
+    padding: 40px 0;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .contact h1 {
+    font-size: 2rem;
+  }
+
+  .greeting {
+    font-size: 2rem;
+  }
+
+  .skills-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .contact-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contact-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .floating-element {
+    font-size: 1.5rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Mouse Follower -->
+<div class="mouse-follower" id="mouseFollower"></div>
+
+<!-- Splash Screen -->
+<div id="splash" class="splash">
+  <h1 class="greeting" id="greeting">Hello</h1>
+</div>
+
+<!-- Fixed Navigation -->
+<nav>
+  <div class="nav-container">
+    <h2>SB</h2>
+    <div class="nav-content">
+      <ul>
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="#" class="cv-pill">
+        <i class="fas fa-download"></i>
+        Download CV
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div id="main-content" class="main-content">
+  
+  <section class="hero" id="hero">
+    <div class="container hero-grid">
+      <div class="hero-text">
+        <h1>Siddhant<br>Bayas</h1>
+        <h3>Full Stack Developer — Maharashtra, India</h3>
+        <p>
+          Self-taught developer exploring how technology reshapes systems. 
+          Currently building projects, diving into blockchain, Web3, and AI.
+          Focused on full stack development and decentralized applications.
+        </p>
+      </div>
+
+      <div class="hero-box">
+        <div class="rotating-star star-1">★</div>
+        <div class="rotating-star star-2">★</div>
+        <div class="rotating-asterisk asterisk-1">✦</div>
+        <div class="rotating-asterisk asterisk-2">✦</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="projects" id="projects">
+    <div class="container">
+      <div class="floating-element float-1">✦</div>
+      <div class="floating-element float-2">★</div>
+      <h2 class="section-title">Recent Projects</h2>
+
+      <div class="project-grid">
+        <div class="project-card">
+          <h3>Coming Soon</h3>
+          <p>Building decentralized applications and full stack tools. 
+          Portfolio projects launching soon.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="skills" id="skills">
+    <div class="container">
+      <div class="floating-element float-3">✦</div>
+      <div class="floating-element float-1">★</div>
+      <h2 class="section-title">Skills & Tech</h2>
+
+      <div class="skills-list">
+        <div class="skill">
+          <i class="fab fa-python"></i>
+          Python
+        </div>
+        <div class="skill">
+          <i class="fab fa-js"></i>
+          JavaScript
+        </div>
+        <div class="skill">
+          <i class="fab fa-node"></i>
+          Node.js
+        </div>
+        <div class="skill">
+          <i class="fab fa-react"></i>
+          React
+        </div>
+        <div class="skill">
+          <i class="fab fa-react"></i>
+          TSX
+        </div>
+        <div class="skill">
+          <i class="fab fa-figma"></i>
+          Figma
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="container">
+      <h1>LET'S BUILD</h1>
+
+      <div class="contact-buttons">
+        <a href="mailto:siddhantbayas5@gmail.com" class="contact-btn">
+          <i class="fas fa-envelope"></i>
+          Email
+        </a>
+        <a href="https://github.com/sidx0" target="_blank" class="contact-btn">
+          <i class="fab fa-github"></i>
+          GitHub
+        </a>
+        <a href="https://twitter.com/BSidx0" target="_blank" class="contact-btn">
+          <i class="fab fa-twitter"></i>
+          Twitter
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// Multilingual greetings
+const greetings = [
+  'Hello',
+  'नमस्ते',
+  'Hola',
+  'வணக்கம்',
+  'నమస్కారం',
+  'مرحبا'
+];
+
+let currentIndex = 0;
+let interval;
+
+function changeSplashText() {
+  const greetingEl = document.getElementById('greeting');
+  
+  // Fade out
+  greetingEl.classList.add('changing');
+  
+  setTimeout(() => {
+    currentIndex = (currentIndex + 1) % greetings.length;
+    greetingEl.textContent = greetings[currentIndex];
+    
+    // Fade in
+    greetingEl.classList.remove('changing');
+  }, 400);
+}
+
+function hideSplash() {
+  clearInterval(interval);
+  document.getElementById('splash').classList.add('hidden');
+  setTimeout(() => {
+    document.getElementById('splash').style.display = 'none';
+  }, 600);
+}
+
+// Start splash screen
+window.addEventListener('DOMContentLoaded', () => {
+  // Change greeting every 1.2 seconds
+  interval = setInterval(changeSplashText, 1200);
+  
+  // Auto-hide after showing all greetings
+  setTimeout(hideSplash, greetings.length * 1200);
+  
+  // Click or scroll to skip
+  document.getElementById('splash').addEventListener('click', hideSplash);
+  window.addEventListener('wheel', hideSplash, { once: true });
+  window.addEventListener('touchstart', hideSplash, { once: true });
+});
+
+// Mouse follower effect (desktop only)
+if (window.innerWidth > 768) {
+  const follower = document.getElementById('mouseFollower');
+  let mouseX = 0, mouseY = 0;
+  let followerX = 0, followerY = 0;
+  
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    follower.classList.add('active');
+  });
+  
+  function animateFollower() {
+    followerX += (mouseX - followerX) * 0.1;
+    followerY += (mouseY - followerY) * 0.1;
+    
+    follower.style.left = followerX - 15 + 'px';
+    follower.style.top = followerY - 15 + 'px';
+    
+    requestAnimationFrame(animateFollower);
+  }
+  
+  animateFollower();
+}
+
+// Snap scrolling - scroll to next section
+let isScrolling = false;
+let lastScrollTime = 0;
+
+window.addEventListener('wheel', (e) => {
+  const now = Date.now();
+  
+  // Throttle scroll events
+  if (now - lastScrollTime < 1000 || isScrolling) {
+    e.preventDefault();
+    return;
+  }
+  
+  lastScrollTime = now;
+  isScrolling = true;
+  
+  const sections = Array.from(document.querySelectorAll('section'));
+  const currentScroll = window.scrollY + window.innerHeight / 2;
+  
+  // Find current section
+  let currentSectionIndex = 0;
+  sections.forEach((section, index) => {
+    const rect = section.getBoundingClientRect();
+    const sectionTop = rect.top + window.scrollY;
+    if (currentScroll >= sectionTop) {
+      currentSectionIndex = index;
+    }
+  });
+  
+  // Determine direction and target section
+  let targetIndex;
+  if (e.deltaY > 0) {
+    // Scroll down
+    targetIndex = Math.min(currentSectionIndex + 1, sections.length - 1);
+  } else {
+    // Scroll up
+    targetIndex = Math.max(currentSectionIndex - 1, 0);
+  }
+  
+  // Scroll to target section
+  sections[targetIndex].scrollIntoView({ 
+    behavior: 'smooth', 
+    block: 'center' 
+  });
+  
+  setTimeout(() => {
+    isScrolling = false;
+  }, 1000);
+}, { passive: false });
+
+// Parallax scrolling effect
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  
+  // Rotate stars in hero
+  document.querySelectorAll('.rotating-star').forEach(star => {
+    star.style.transform = `rotate(${scrolled * 0.3}deg)`;
+  });
+  
+  document.querySelectorAll('.rotating-asterisk').forEach(asterisk => {
+    asterisk.style.transform = `rotate(${-scrolled * 0.3}deg)`;
+  });
+
+  // Subtle parallax on sections
+  document.querySelectorAll('section').forEach((section) => {
+    const rect = section.getBoundingClientRect();
+    const sectionCenter = rect.top + rect.height / 2;
+    const windowCenter = window.innerHeight / 2;
+    const distance = sectionCenter - windowCenter;
+    const parallaxOffset = distance * 0.02;
+    
+    section.style.transform = `translateY(${parallaxOffset}px)`;
+  });
+});
+
+// Smooth scroll for nav links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(anchor.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+});
+</script>
+
+</body>
+  </html>
