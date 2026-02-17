@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Siddhant Bayas — Full Stack Dev & Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@300;400;500&family=Noto+Sans+Tamil&family=Noto+Sans+Telugu&family=Noto+Sans+Devanagari&family=Noto+Sans+Arabic&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root {
+  --cream: #F5F0E8;
+  --ink:   #0D0D0D;
+  --rust:  #C84B31;
+  --sand:  #E8E0D0;
+  --muted: #7A7068;
+  --white: #FDFCFA;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+::selection { background: var(--ink); color: var(--cream); }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--rust); }
+
+/* ── CURSOR ─────────────────────────────── */
+#cursor-dot {
+  position: fixed; width: 6px; height: 6px;
+  background: var(--rust); border-radius: 50%;
+  pointer-events: none; z-index: 99999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.05s;
+}
+#cursor-ring {
+  position: fixed; width: 36px; height: 36px;
+  border: 1.5px solid rgba(200,75,49,0.5);
+  border-radius: 50%; pointer-events: none; z-index: 99998;
+  transform: translate(-50%,-50%);
+  transition: width 0.3s, height 0.3s, border-color 0.3s;
+}
+body:has(a:hover, button:hover, [data-cursor]:hover) #cursor-ring {
+  width: 56px; height: 56px;
+  border-color: var(--rust);
+}
+
+/* ── NOISE LAYER ─────────────────────────── */
+#noise {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9997;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ── SCROLL PROGRESS ─────────────────────── */
+#progress {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: var(--rust); width: 0%;
+  z-index: 200; transition: width 0.05s;
+}
+
+/* ── SPLASH ──────────────────────────────── */
+#splash {
+  position: fixed; inset: 0;
+  background: var(--ink); z-index: 99990;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.7s cubic-bezier(.76,0,.24,1),
+              transform 0.7s cubic-bezier(.76,0,.24,1);
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0 20px;
+}
+#splash.out { opacity: 0; transform: scale(1.06); pointer-events: none; }
+
+/* grid lines on splash */
+#splash::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+#splash-word {
+  font-family: 'Bebas Neue', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Noto Sans Devanagari', sans-serif;
+  font-size: clamp(2.2rem, 9vw, 10rem);
+  color: var(--cream);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  animation: wordIn 0.5s cubic-bezier(.22,1,.36,1) both;
+  will-change: transform, opacity;
+  text-align: center;
+  max-width: 90vw;
+  word-break: break-word;
+}
+#splash-lang {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-top: 16px;
+  animation: wordIn 0.5s 0.1s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes wordIn {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+@keyframes wordOut {
+  from { opacity:1; transform: translateY(0); }
+  to   { opacity:0; transform: translateY(-16px); }
+}
+.word-exit { animation: wordOut 0.3s cubic-bezier(.76,0,.24,1) both !important; }
+
+#splash-dots {
+  position: absolute; bottom: 48px;
+  display: flex; gap: 10px; align-items: center;
+}
+.sdot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  transition: all 0.4s ease;
+}
+.sdot.active { background: var(--rust); transform: scale(1.3); }
+
+#splash-hint {
+  position: absolute; bottom: 24px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.2); text-transform: uppercase;
+}
+
+/* red accent line */
+#splash-line {
+  position: absolute; bottom: 0; left: 0;
+  height: 3px; background: var(--rust);
+  animation: lineGrow 7.2s linear forwards;
+}
+@keyframes lineGrow { from { width: 0; } to { width: 100%; } }
+
+/* ── NAV ─────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100; padding: 0 5%;
+  height: 72px;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: background 0.4s, border-color 0.4s;
+  border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  background: rgba(245,240,232,0.88);
+  backdrop-filter: blur(16px);
+  border-color: rgba(0,0,0,0.07);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem; letter-spacing: 0.06em;
+  color: var(--ink); text-decoration: none;
+}
+.nav-right { display: flex; gap: 36px; align-items: center; }
+.nav-link {
+  font-size: 0.8rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink); text-decoration: none;
+  opacity: 0.5; transition: opacity 0.2s;
+}
+.nav-link:hover, .nav-link.active { opacity: 1; }
+.nav-cv {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  background: var(--ink); color: var(--cream);
+  border: none; border-radius: 0; cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.nav-cv:hover { background: var(--rust); color: white; }
+
+@media (max-width: 768px) {
+  nav { display: none; }
+}
+
+/* ── SECTION BASE ────────────────────────── */
+section {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 100px 5% 80px;
+  position: relative; overflow: hidden;
+}
+
+/* ── HERO ────────────────────────────────── */
+#hero {
+  padding-top: 120px;
+  background: var(--cream);
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--rust); margin-bottom: 28px;
+  opacity: 0; animation: fadeUp 0.7s 0.2s ease both;
+}
+.hero-eyebrow span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--rust);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+.hero-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(5rem, 13vw, 11rem);
+  line-height: 0.88; letter-spacing: 0.02em;
+  opacity: 0; animation: fadeUp 0.7s 0.3s ease both;
+}
+.hero-name .rust { color: var(--rust); }
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-top: 56px;
+  align-items: start;
+  opacity: 0; animation: fadeUp 0.7s 0.5s ease both;
+}
+
+.hero-bio {
+  font-size: 1.05rem; color: var(--muted);
+  line-height: 1.8; max-width: 480px;
+}
+.hero-bio strong { color: var(--ink); font-weight: 600; }
+
+/* Contact links under bio */
+.hero-contacts {
+  display: flex; flex-direction: column; gap: 4px;
+  margin-top: 32px;
+}
+.hero-contact-link {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink); text-decoration: none;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--sand);
+  transition: color 0.2s, padding-left 0.3s cubic-bezier(.23,1,.32,1);
+  width: fit-content; min-width: 280px;
+}
+.hero-contact-link i { color: var(--rust); font-size: 0.9rem; width: 16px; }
+.hero-contact-link:hover { color: var(--rust); padding-left: 10px; }
+
+/* Hero right — decorative box */
+.hero-visual {
+  position: relative;
+  height: 420px;
+}
+.hero-box {
+  width: 100%; height: 100%;
+  background: var(--sand);
+  border: 1.5px solid rgba(0,0,0,0.08);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-box-monogram {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 11rem; letter-spacing: 0.04em;
+  color: rgba(0,0,0,0.05); user-select: none;
+  position: absolute;
+}
+.hero-box-tag {
+  position: absolute; bottom: 20px; right: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--muted);
+}
+
+/* Floaters in hero box */
+.sym {
+  position: absolute;
+  font-family: 'DM Mono', monospace;
+  color: var(--rust); opacity: 0.18;
+  pointer-events: none;
+  animation: floatSym 8s ease-in-out infinite;
+}
+@keyframes floatSym {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  33%      { transform: translateY(-18px) rotate(12deg); }
+  66%      { transform: translateY(10px) rotate(-8deg); }
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(28px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── HORIZONTAL MARQUEE DIVIDER ──────────── */
+.marquee-wrap {
+  overflow: hidden;
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  padding: 14px 0;
+  background: var(--ink);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 22s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+.marquee-item {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem; letter-spacing: 0.18em;
+  color: var(--cream); padding: 0 32px;
+  display: inline-flex; align-items: center; gap: 32px;
+  flex-shrink: 0;
+}
+.marquee-item .dot { color: var(--rust); }
+@keyframes marqueeScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── PROJECTS ────────────────────────────── */
+#projects { background: var(--white); }
+
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--rust); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::before {
+  content: ''; display: block;
+  width: 20px; height: 1.5px; background: var(--rust);
+}
+
+.section-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4rem, 9vw, 8rem);
+  line-height: 0.92; letter-spacing: 0.02em;
+  margin-bottom: 64px;
+}
+
+.project-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 32px 0;
+  border-bottom: 1.5px solid var(--sand);
+  cursor: default;
+  transition: padding-left 0.4s cubic-bezier(.23,1,.32,1);
+  position: relative;
+  overflow: hidden;
+}
+.project-item::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0; background: var(--sand);
+  transition: width 0.4s cubic-bezier(.23,1,.32,1);
+  z-index: 0;
+}
+.project-item:hover::before { width: 100%; }
+.project-item:hover { padding-left: 20px; }
+.project-item > * { position: relative; z-index: 1; }
+
+.project-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem; color: var(--muted);
+  letter-spacing: 0.1em; min-width: 40px;
+}
+.project-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  letter-spacing: 0.05em; flex: 1; padding: 0 24px;
+}
+.project-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+  border: 1px solid var(--sand); padding: 5px 12px;
+}
+.project-arrow {
+  width: 40px; height: 40px;
+  border: 1.5px solid var(--sand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; margin-left: 20px;
+  transition: background 0.3s, border-color 0.3s;
+}
+.project-item:hover .project-arrow {
+  background: var(--ink); color: var(--cream); border-color: var(--ink);
+}
+
+/* ── SKILLS ──────────────────────────────── */
+#skills { background: var(--cream); }
+
+.skills-outer {
+  display: grid; grid-template-columns: 1fr 1.6fr;
+  gap: 80px; align-items: start;
+}
+.skills-text p {
+  font-size: 1rem; color: var(--muted); line-height: 1.8; margin-top: 20px;
+}
+
+.skills-cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.skill-card {
+  background: var(--white);
+  border: 1.5px solid var(--sand);
+  padding: 28px 20px; text-align: center;
+  transition: all 0.35s cubic-bezier(.23,1,.32,1);
+  position: relative; overflow: hidden; cursor: default;
+}
+.skill-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 0; background: var(--ink);
+  transition: height 0.35s cubic-bezier(.23,1,.32,1);
+}
+.skill-card:hover::after { height: 3px; }
+.skill-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+}
+
+.skill-icon-wrap {
+  width: 48px; height: 48px;
+  margin: 0 auto 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.35s ease;
+}
+.skill-card:hover .skill-icon-wrap { transform: scale(1.15) rotate(6deg); }
+.skill-icon-wrap svg { width: 100%; height: 100%; display: block; }
+
+.skill-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink);
+}
+
+/* Stats row */
+.stats-row {
+  display: flex; gap: 48px; margin-top: 56px;
+  flex-wrap: wrap;
+}
+.stat-item {}
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4rem; line-height: 1; color: var(--ink);
+}
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ── CONTACT ─────────────────────────────── */
+#contact {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.contact-giant {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(5rem, 14vw, 13rem);
+  line-height: 0.88; letter-spacing: 0.02em;
+  margin-bottom: 64px;
+}
+.contact-giant .rust { color: var(--rust); }
+
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+  align-items: start;
+}
+.contact-left p {
+  font-size: 1rem; color: rgba(255,255,255,0.45);
+  line-height: 1.8; max-width: 380px;
+}
+
+.contact-links { display: flex; flex-direction: column; gap: 0; }
+.contact-link-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  text-decoration: none;
+  transition: padding-left 0.35s cubic-bezier(.23,1,.32,1);
+  group: true;
+}
+.contact-link-row:hover { padding-left: 14px; }
+.contact-link-label {
+  display: flex; align-items: center; gap: 14px;
+}
+.contact-link-label i {
+  color: var(--rust); width: 18px; font-size: 0.9rem;
+}
+.contact-link-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--cream);
+}
+.contact-link-handle {
+  font-size: 0.85rem; color: rgba(255,255,255,0.35);
+  font-family: 'DM Mono', monospace;
+  transition: color 0.2s;
+}
+.contact-link-row:hover .contact-link-handle { color: var(--rust); }
+
+.contact-link-arrow {
+  font-size: 1rem; color: rgba(255,255,255,0.2);
+  transition: transform 0.3s, color 0.3s;
+}
+.contact-link-row:hover .contact-link-arrow {
+  transform: translate(4px, -4px);
+  color: var(--rust);
+}
+
+.contact-footer {
+  margin-top: 80px; padding-top: 32px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+}
+.contact-footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem; letter-spacing: 0.06em; color: var(--cream);
+}
+.contact-footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(255,255,255,0.2);
+}
+
+/* ── FLOATING DECORATIVE SYMBOLS ─────────── */
+.decor {
+  position: absolute; font-family: 'DM Mono', monospace;
+  pointer-events: none; user-select: none;
+  color: var(--rust); opacity: 0.12;
+  animation: floatSym 10s ease-in-out infinite;
+  font-size: 3.5rem;
+}
+
+/* ── HORIZONTAL RULE DIVIDER ─────────────── */
+.ruled-line {
+  width: 100%; height: 1.5px;
+  background: linear-gradient(90deg, var(--rust), transparent);
+  margin: 60px 0;
+}
+
+/* ── RESPONSIVE ──────────────────────────── */
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .skills-outer { grid-template-columns: 1fr; gap: 40px; }
+  .skills-cards { grid-template-columns: repeat(2, 1fr); }
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .contact-giant { font-size: clamp(4rem, 15vw, 8rem); }
+}
+@media (max-width: 600px) {
+  .skills-cards { grid-template-columns: repeat(2, 1fr); }
+  .stats-row { gap: 28px; }
+  .section-heading { font-size: 4rem; }
+  .hero-name { font-size: 5rem; }
+  #hero { padding-top: 48px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Noise -->
+<div id="noise"></div>
+
+<!-- Progress -->
+<div id="progress"></div>
+
+<!-- ── SPLASH ── -->
+<div id="splash">
+  <div id="splash-word">Hello</div>
+  <div id="splash-lang">English</div>
+  <div id="splash-dots">
+    <div class="sdot active"></div>
+    <div class="sdot"></div>
+    <div class="sdot"></div>
+    <div class="sdot"></div>
+    <div class="sdot"></div>
+    <div class="sdot"></div>
+  </div>
+  <div id="splash-line"></div>
+  <div id="splash-hint">click to skip</div>
+</div>
+
+<!-- ── NAV ── -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo">SB</a>
+  <div class="nav-right">
+    <a href="#hero"     class="nav-link active" data-section="hero">Home</a>
+    <a href="#projects" class="nav-link" data-section="projects">Projects</a>
+    <a href="#skills"   class="nav-link" data-section="skills">Skills</a>
+    <a href="#contact"  class="nav-link" data-section="contact">Contact</a>
+    <a href="#" class="nav-cv" data-cursor>
+      <i class="fas fa-arrow-down"></i> CV
+    </a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <!-- Decorative symbols -->
+  <span class="decor" style="top:12%;right:6%;font-size:4rem;animation-delay:0s">✦</span>
+  <span class="decor" style="top:60%;right:3%;font-size:2.5rem;animation-delay:1.5s">★</span>
+  <span class="decor" style="bottom:15%;left:2%;font-size:3rem;animation-delay:3s">◈</span>
+  <span class="decor" style="top:30%;left:1%;font-size:2rem;animation-delay:2s;opacity:0.07">⬡</span>
+
+  <div style="max-width:1200px;width:100%;margin:0 auto;">
+    <div class="hero-eyebrow">
+      <span></span> Full Stack Developer &amp; Designer
+    </div>
+
+    <div class="hero-name">
+      Siddhant<br><span class="rust">Bayas.</span>
+    </div>
+
+    <div class="hero-grid">
+      <!-- Left -->
+      <div>
+        <p class="hero-bio">
+          Self-taught dev from <strong>Maharashtra, India</strong>.
+          17. Building full-stack systems and exploring the wild frontier of
+          <strong>blockchain, Web3</strong> and decentralized apps.
+          Also a <strong>graphic designer</strong> — because code and craft go hand in hand.
+        </p>
+
+        <!-- Social links below bio -->
+        <div class="hero-contacts">
+          <a href="mailto:siddhantbayas5@gmail.com" class="hero-contact-link" data-cursor>
+            <i class="fas fa-envelope"></i>
+            siddhantbayas5@gmail.com
+          </a>
+          <a href="https://github.com/sidx0" target="_blank" class="hero-contact-link" data-cursor>
+            <i class="fab fa-github"></i>
+            github.com/sidx0
+          </a>
+          <a href="https://twitter.com/BSidx0" target="_blank" class="hero-contact-link" data-cursor>
+            <i class="fab fa-twitter"></i>
+            @BSidx0
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: decorative visual box -->
+      <div class="hero-visual">
+        <div class="hero-box" id="hero-box">
+          <span class="hero-box-monogram">SB</span>
+
+          <span class="sym" id="s1" style="top:14%;left:18%;font-size:3.5rem;animation-delay:0s">✦</span>
+          <span class="sym" id="s2" style="bottom:16%;right:18%;font-size:4rem;animation-delay:1.8s">★</span>
+          <span class="sym" id="s3" style="top:52%;right:22%;font-size:2.5rem;animation-delay:3.2s">◈</span>
+          <span class="sym" id="s4" style="bottom:44%;left:20%;font-size:2rem;animation-delay:0.9s">⬡</span>
+          <span class="sym" id="s5" style="top:26%;right:14%;font-size:1.8rem;animation-delay:2.5s">✦</span>
+
+          <div class="hero-box-tag">Maharashtra, India — 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MARQUEE DIVIDER ── -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack">
+    <span class="marquee-item">Full Stack Dev <span class="dot">✦</span></span>
+    <span class="marquee-item">Graphic Design <span class="dot">✦</span></span>
+    <span class="marquee-item">Web3 <span class="dot">✦</span></span>
+    <span class="marquee-item">Blockchain <span class="dot">✦</span></span>
+    <span class="marquee-item">UI / UX <span class="dot">✦</span></span>
+    <span class="marquee-item">React <span class="dot">✦</span></span>
+    <span class="marquee-item">TypeScript <span class="dot">✦</span></span>
+    <span class="marquee-item">Open Source <span class="dot">✦</span></span>
+    <!-- Duplicate set for seamless loop -->
+    <span class="marquee-item">Full Stack Dev <span class="dot">✦</span></span>
+    <span class="marquee-item">Graphic Design <span class="dot">✦</span></span>
+    <span class="marquee-item">Web3 <span class="dot">✦</span></span>
+    <span class="marquee-item">Blockchain <span class="dot">✦</span></span>
+    <span class="marquee-item">UI / UX <span class="dot">✦</span></span>
+    <span class="marquee-item">React <span class="dot">✦</span></span>
+    <span class="marquee-item">TypeScript <span class="dot">✦</span></span>
+    <span class="marquee-item">Open Source <span class="dot">✦</span></span>
+  </div>
+</div>
+
+<!-- ── PROJECTS ── -->
+<section id="projects">
+  <span class="decor" style="top:10%;right:4%;animation-delay:0.5s;font-size:3rem">★</span>
+  <span class="decor" style="bottom:20%;left:2%;animation-delay:2s;font-size:2.5rem;color:#0D0D0D;opacity:0.06">✦</span>
+
+  <div style="max-width:1200px;width:100%;margin:0 auto;">
+    <div class="section-label">01 — Projects</div>
+    <h2 class="section-heading">Recent<br>Projects</h2>
+
+    <div id="project-list">
+      <div class="project-item" data-cursor>
+        <span class="project-num">01</span>
+        <span class="project-name">Coming Soon</span>
+        <span class="project-tag">In Progress</span>
+        <span class="project-arrow">↗</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section id="skills">
+  <span class="decor" style="top:8%;right:3%;animation-delay:1s;font-size:4rem">◈</span>
+  <span class="decor" style="bottom:12%;right:5%;animation-delay:2.5s;font-size:2.5rem">⬡</span>
+
+  <div style="max-width:1200px;width:100%;margin:0 auto;">
+    <div class="skills-outer">
+      <!-- Left text -->
+      <div>
+        <div class="section-label">02 — Skills</div>
+        <h2 class="section-heading" style="font-size:clamp(3rem,6vw,5.5rem)">Skills<br>&amp; Tech</h2>
+        <p class="skills-text" style="font-size:1rem;color:var(--muted);line-height:1.8;margin-top:20px;max-width:340px;">
+          Writing code by day, designing systems by night.
+          Full-stack at heart, obsessed with clean interfaces and decentralized futures.
+        </p>
+
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-num" data-count="6">0</div>
+            <div class="stat-label">Languages</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num" data-count="3">0</div>
+            <div class="stat-label">Frameworks</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right cards -->
+      <div class="skills-cards">
+
+        <!-- Python -->
+        <div class="skill-card" data-cursor>
+          <div class="skill-icon-wrap">
+            <svg viewBox="0 0 128 128" width="42" height="42">
+              <linearGradient id="py1" x1="70.252" y1="1237.476" x2="170.659" y2="1151.089" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5A9FD4"/><stop offset="1" stop-color="#306998"/></linearGradient>
+              <linearGradient id="py2" x1="209.474" y1="1098.811" x2="173.62" y2="1149.537" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFD43B"/><stop offset="1" stop-color="#FFE873"/></linearGradient>
+              <path fill="url(#py1)" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zM50.037 9.557c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z"/>
+              <path fill="url(#py2)" d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z"/>
+            </svg>
+          </div>
+          <div class="skill-name">Python</div>
+        </div>
+
+        <!-- JavaScript -->
+        <div class="skill-card" data-cursor>
+          <div class="skill-icon-wrap">
+            <svg viewBox="0 0 128 128" width="42" height="42">
+              <path fill="#F0DB4F" d="M1.408 1.408h125.184v125.185H1.408z"/>
+              <path fill="#323330" d="M116.347 96.736c-.917-5.711-4.641-10.508-15.672-14.981-3.832-1.761-8.104-3.022-9.377-5.926-.452-1.69-.512-2.642-.226-3.665.821-3.32 4.784-4.355 7.925-3.403 2.023.678 3.938 2.237 5.093 4.724 5.402-3.498 5.391-3.475 9.163-5.879-1.381-2.141-2.118-3.129-3.022-4.045-3.249-3.629-7.676-5.498-14.756-5.355l-3.688.477c-3.534.893-6.902 2.748-8.877 5.235-5.926 6.724-4.236 18.492 2.975 23.335 7.104 5.332 17.54 6.545 18.873 11.531 1.297 6.104-4.486 8.08-10.234 7.378-4.236-.881-6.592-3.034-9.139-6.949-4.688 2.713-4.688 2.713-9.508 5.485 1.143 2.499 2.344 3.63 4.26 5.795 9.068 9.198 31.76 8.746 35.83-5.176.165-.478 1.261-3.666.38-8.581zM69.462 58.943H57.753l-.048 30.272c0 6.438.333 12.34-.714 14.149-1.713 3.558-6.152 3.117-8.175 2.427-2.059-1.012-3.106-2.451-4.319-4.485-.333-.584-.583-1.036-.667-1.071l-9.52 5.83c1.583 3.249 3.915 6.069 6.902 7.901 4.462 2.678 10.459 3.499 16.731 2.059 4.082-1.189 7.604-3.652 9.448-7.401 2.666-4.915 2.094-10.864 2.07-17.444.06-10.735.001-21.468.001-32.237z"/>
+            </svg>
+          </div>
+          <div class="skill-name">JavaScript</div>
+        </div>
+
+        <!-- Node.js -->
+        <div class="skill-card" data-cursor>
+          <div class="skill-icon-wrap">
+            <svg viewBox="0 0 128 128" width="42" height="42">
+              <path fill="#83CD29" d="M112.771 30.334L68.674 4.729c-2.781-1.584-6.402-1.584-9.205 0L14.901 30.334C12.031 31.985 10 35.088 10 38.407v51.142c0 3.319 2.084 6.423 4.954 8.083l11.775 6.688c5.628 2.772 7.617 2.772 10.178 2.772 8.333 0 13.093-5.039 13.093-13.828v-50.49c0-.713-.371-1.774-1.071-1.774h-5.623C42.594 41 42 42.061 42 42.773v50.49c0 3.896-3.524 7.773-10.11 4.48L20.1 90.73c-.428-.193-.523-.651-.523-1.181V38.407c0-.482.142-.966.42-1.338l43.961-25.556c.37-.277.886-.277 1.257 0l43.866 25.556c.378.372.42.856.42 1.338v51.142c0 .482-.089.966-.42 1.338l-44.075 25.239c-.268.132-.591.132-.859 0l-11.188-6.422c-.322-.149-.708-.232-1.019-.095-3.242 1.834-3.832 2.097-6.856 3.183-.727.279-1.816.7.418 1.98l14.64 8.548c1.376.793 2.895 1.216 4.462 1.216 1.566 0 3.085-.423 4.509-1.216l43.959-25.603c2.876-1.613 4.807-4.767 4.807-8.083V38.407c0-3.319-1.983-6.472-4.807-8.073zM77.996 81.437c-11.826 0-14.319-3.235-15.21-9.772-.105-.628-.633-1.023-1.20-1.023h-5.633c-.708 0-1.241.605-1.241 1.298 0 7.26 3.759 15.89 23.284 15.89 13.943 0 21.948-5.786 21.948-15.986 0-10.396-7.006-13.127-21.698-15.099-14.847-1.972-16.372-2.977-16.372-6.493 0-2.899 1.286-6.762 12.154-6.762 9.738 0 13.316 2.143 14.803 8.723.084.398.663.713 1.071.713h5.633c.354 0 .707-.203.884-.535.195-.404.141-.808-.053-1.159-1.891-13.498-10.117-19.789-22.338-19.789-12.778 0-20.413 5.441-20.413 14.549 0 9.905 7.651 12.666 20.786 13.971 15.372 1.547 17.3 3.808 17.3 7.671 0 5.908-4.703 8.604-15.479 8.604z"/>
+            </svg>
+          </div>
+          <div class="skill-name">Node.js</div>
+        </div>
+
+        <!-- React -->
+        <div class="skill-card" data-cursor>
+          <div class="skill-icon-wrap">
+            <svg viewBox="0 0 128 128" width="42" height="42">
+              <g fill="#61DAFB">
+                <circle cx="64" cy="64" r="11.4"/>
+                <path d="M107.3 45.2c-2.2-.8-4.5-1.6-6.9-2.3.6-2.4 1.1-4.8 1.5-7.1 2.1-13-1.2-22.3-9.6-27.1-8.5-5-20.3-1.2-32.4 11.1C48.8 8.5 37 4.7 28.5 9.7c-8.4 4.8-11.7 14.1-9.6 27.1.4 2.3.9 4.7 1.5 7.1-2.4.7-4.7 1.4-6.9 2.3C8.2 50 1.4 56.6 1.4 64s6.8 14 16.1 17.8c2.2.8 4.5 1.6 6.9 2.3-.6 2.4-1.1 4.8-1.5 7.1-2.1 13 1.2 22.3 9.6 27.1 8.5 4.9 20.3 1.1 32.4-11.1 12.1 12.2 23.9 16 32.4 11.1 8.4-4.8 11.7-14.1 9.6-27.1-.4-2.3-.9-4.7-1.5-7.1 2.4-.7 4.7-1.4 6.9-2.3 9.3-3.8 16.1-10.4 16.1-17.8-.1-7.4-6.9-14-16.1-17.8zM92.1 25.1c6.4 3.7 9.2 11.5 7.5 22.6-.3 2.1-.8 4.3-1.4 6.6-4.4-1-9.2-1.8-14.3-2.3-3-4.3-6.1-8.3-9.4-11.9 7.1-7.3 13.9-11.8 17.6-15zm-17.5 28c-1.9-3.3-3.8-6.4-5.9-9.2 3.6.2 7.4.6 11 1.2-1.1 2.6-2.3 5.3-3.6 7.9-.5.1-1 .1-1.5.1zm-11.6 0c-1.4 0-2.8 0-4.2-.1-1.3-2.6-2.6-5.3-3.7-8 3.6-.6 7.4-1 11-1.2-2.1 2.8-4 5.9-5.9 9.2l2.8.1zm0 5.5c1.9 3.3 3.8 6.4 5.9 9.2-3.6-.2-7.4-.6-11-1.2 1.1-2.6 2.3-5.3 3.6-7.9.5.1 1 .1 1.5.1zm11.6 0c1.4 0 2.8 0 4.2.1 1.3 2.6 2.6 5.3 3.7 8-3.6.6-7.4 1-11 1.2 2.1-2.8 4-5.9 5.9-9.2l-2.8-.1zm10.6 7.8c1.3-2.6 2.6-5.3 3.8-8.2 2.4.5 4.8 1.1 7 1.8-1.3 3.6-3.1 6.9-5.4 9.7-1.9-.4-3.8-.9-5.4-3.3zm-7.9-43.7c-.6.6-1.2 1.3-1.8 2-2.2 2.5-4.5 5.2-6.7 8.2-2.2-.3-4.4-.5-6.7-.6 2.1-4.2 4.6-8.1 7.4-11.6 3-3.7 7.7-8.5 12.3-8.5 2.9 0 5.4 1.5 7.5 4.5-3.4 1.7-8.6 3.9-12 6zM27.4 64c0-4.6.5-9.2 1.6-13.6 2.2.7 4.6 1.3 7 1.8.4 2.2.9 4.5 1.5 6.8-.7 1.4-1.3 2.9-1.8 4.4-.5 1.5-1 3-1.5 4.5-2.4.5-4.8 1.1-7 1.8C27.9 73.2 27.4 68.6 27.4 64zm6.7 24.8c-1.3-3.6-3.1-6.9-5.4-9.7 1.9.4 3.8.9 5.4 1.3-1.3 2.6-2.6 5.3-3.8 8.2-1.9-.4-3.8-.9-5.4-1.3 2.3-2.8 4.1-6.1 5.4-9.7zM28 49.2c1.3-3.6 3.1-6.9 5.4-9.7 1.6.4 3.5.9 5.4 1.3-1.2 2.9-2.5 5.6-3.8 8.2-2.4-.5-4.8-1.1-7-1.8zm34.3-25.2c-3.9 4.6-7.5 9.7-10.7 15.1-2.2-.1-4.4-.2-6.6-.2-2.3 0-4.5.1-6.7.2 2.8-5.1 6.1-9.9 9.9-14.2 4.5-5.2 10.9-11.3 17.9-11.3 4.5 0 8.7 2.1 12.1 6-4.2 1.9-9.3 5.6-15.9 4.4zm-5.9 33.4c3 4.3 6.1 8.3 9.4 11.9-7.1 7.3-13.9 11.8-17.6 15-6.4-3.7-9.2-11.5-7.5-22.6.3-2.1.8-4.3 1.4-6.6 4.4 1 9.2 1.8 14.3 2.3zm5.4-5.4c-1.3-2.7-2.6-5.5-3.7-8.2 3.6.5 7.4.8 11.3.9-1.3 2.8-2.6 5.5-3.9 8.2-1.2-.1-2.4-.1-3.7-.1-.1 0-.1.1 0 .1-.1 0-.1.1 0 0zm4.7-20.5c2.2 2.4 4.4 5.1 6.7 8.2-2.2.1-4.4.2-6.6.2-2.2 0-4.5-.1-6.7-.2 2.3-3.1 4.5-5.8 6.6-8.2zm6.9 12.7c2.2.1 4.4.2 6.7.2 2.3 0 4.5-.1 6.6-.2-2.4 3.3-4.8 6.3-7.2 9-2.5-2.8-4.9-5.8-7.3-9l1.2.0zm-1.1 21.8c-3.3-3.6-6.4-7.6-9.4-11.9 5.1.5 9.9 1.3 14.3 2.3.6 2.3 1.1 4.5 1.4 6.6 1.7 11.1-1.1 18.9-7.5 22.6-3.7-3.2-10.5-7.7-17.6-15 3.3-3.6 6.4-7.6 9.4-11.9 1.9.1 3.9.2 5.8.2 1.9 0 3.8-.1 5.8-.2-.6.8-1.5 2-2.2 7.3zm-2.3-3.8c-1.3 2.8-2.6 5.5-3.9 8.2-1.3 0-2.5 0-3.8 0 0 0-.1 0 0-.1-1.2-2.7-2.5-5.4-3.7-8.2 1.9.1 3.8.2 5.8.2 1.9 0 3.8-.1 5.6-.1zm4.2 12.4c-1.6.4-3.5.9-5.4 1.3 1.2-2.9 2.5-5.6 3.8-8.2 2.4.5 4.8 1.1 7 1.8-1.3 3.6-3.1 6.9-5.4 9.7zm1.6-26.5c-.5-1.5-1-3-1.6-4.5-.5-1.5-1.1-2.9-1.7-4.3.6-2.3 1.1-4.6 1.5-6.8 2.4-.5 4.8-1.1 7-1.8 1.1 4.4 1.6 9 1.6 13.6 0 4.6-.5 9.2-1.6 13.6-2.2-.7-4.6-1.3-7-1.8.6-1.5 1.2-3 1.8-4.6.3-1.4.6-2.9.5-3.4zm-24.6 0c-.5 1.5-1 3-1.6 4.5-.5 1.5-.8 3-.5 4.5-2.4-.5-4.8-1.1-7-1.8-1.1-4.4-1.6-9-1.6-13.6 0-4.6.5-9.2 1.6-13.6 2.2.7 4.6 1.3 7 1.8-.4 2.2-.9 4.5-1.5 6.8.6 1.4 1.2 2.8 1.7 4.3.5 1.5 1 3 1.6 4.6l.3-1.5zm6.9 47.2c-4.5 0-8.7-2.1-12.1-6 4.2-1.9 9.3-5.6 15.9-4.4 3.9-4.6 7.5-9.7 10.7-15.1 2.2.1 4.4.2 6.6.2 2.3 0 4.5-.1 6.7-.2-2.8 5.1-6.1 9.9-9.9 14.2-4.5 5.2-10.9 11.3-17.9 11.3zm28-25.6c-1.9-.4-3.8-.9-5.4-1.3 1.2-2.9 2.5-5.6 3.8-8.2 2.4.5 4.8 1.1 7 1.8-1.3 3.6-3.1 6.9-5.4 9.7zm2.2-24.8c-1.6-.4-3.5-.9-5.4-1.3 1.3-2.6 2.6-5.3 3.8-8.2 2.4.5 4.8 1.1 7 1.8-2.3 2.8-4.1 6.1-5.4 9.7z"/>
+              </g>
+            </svg>
+          </div>
+          <div class="skill-name">React</div>
+        </div>
+
+        <!-- TypeScript - proper TS badge -->
+        <div class="skill-card" data-cursor>
+          <div class="skill-icon-wrap">
+            <svg viewBox="0 0 128 128" width="42" height="42">
+              <path fill="#3178C6" d="M1.5 63.91v62.5h125v-125H1.5zm100.73-5a15.56 15.56 0 017.82 4.5 20.58 20.58 0 013 4c0 .16-5.4 3.81-8.69 5.85-.12.08-.6-.44-1.13-1.23a7.09 7.09 0 00-5.87-3.53c-3.79-.26-6.23 1.73-6.21 5a4.58 4.58 0 00.54 2.34c.83 1.73 2.38 2.76 7.24 4.86 8.95 3.85 12.78 6.39 15.16 10 2.66 4 3.25 10.46 1.45 15.24-2 5.2-6.9 8.73-13.83 9.9a38.32 38.32 0 01-9.52-.1 23 23 0 01-12.72-6.63c-1.15-1.27-3.39-4.58-3.25-4.82a9.34 9.34 0 011.15-.73l4.6-2.64 3.59-2.08.75 1.11a16.78 16.78 0 004.74 4.54c4 2.1 9.46 1.81 12.16-.62a5.43 5.43 0 00.69-6.92c-1-1.39-3-2.56-8.59-5-6.45-2.78-9.23-4.5-11.77-7.24a16.48 16.48 0 01-3.43-6.25 25 25 0 01-.22-8c1.33-6.23 6-10.58 12.82-11.87a31.66 31.66 0 019.49.26zm-29.34 5.24v5.12H57.16v46.23H45.65V69.26H30.78v-5a49.19 49.19 0 01.14-5.16c.06-.08 10-.12 22.06-.1l21.81.06z"/>
+            </svg>
+          </div>
+          <div class="skill-name">TypeScript</div>
+        </div>
+
+        <!-- Figma -->
+        <div class="skill-card" data-cursor>
+          <div class="skill-icon-wrap">
+            <svg viewBox="0 0 128 128" width="42" height="42">
+              <path d="M45.5 129c11.9 0 21.5-9.6 21.5-21.5V86H45.5C33.6 86 24 95.6 24 107.5S33.6 129 45.5 129z" fill="#0ACF83"/>
+              <path d="M24 64.5C24 52.6 33.6 43 45.5 43H67v43H45.5C33.6 86 24 76.4 24 64.5z" fill="#A259FF"/>
+              <path d="M24 21.5C24 9.6 33.6 0 45.5 0H67v43H45.5C33.6 43 24 33.4 24 21.5z" fill="#F24E1E"/>
+              <path d="M67 0h21.5C100.4 0 110 9.6 110 21.5S100.4 43 88.5 43H67V0z" fill="#FF7262"/>
+              <path d="M110 64.5c0 11.9-9.6 21.5-21.5 21.5S67 76.4 67 64.5 76.6 43 88.5 43 110 52.6 110 64.5z" fill="#1ABCFE"/>
+            </svg>
+          </div>
+          <div class="skill-name">Figma</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <span class="decor" style="top:10%;right:4%;animation-delay:1s;font-size:4rem;color:var(--cream);opacity:0.04">★</span>
+  <span class="decor" style="bottom:20%;left:2%;animation-delay:2s;font-size:3rem;color:var(--cream);opacity:0.04">✦</span>
+
+  <div style="max-width:1200px;width:100%;margin:0 auto;">
+    <div class="section-label" style="color:var(--rust)">03 — Contact</div>
+    <div class="contact-giant">
+      Let's<br><span class="rust">Build.</span>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-left">
+        <p>Open to collaborations, learning opportunities, and conversations about tech, design, and crypto. Drop a message.</p>
+      </div>
+
+      <div class="contact-links">
+        <a href="mailto:siddhantbayas5@gmail.com" class="contact-link-row" data-cursor>
+          <div class="contact-link-label">
+            <i class="fas fa-envelope"></i>
+            <span class="contact-link-name">Email</span>
+          </div>
+          <span class="contact-link-handle">siddhantbayas5@gmail.com</span>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="https://github.com/sidx0" target="_blank" class="contact-link-row" data-cursor>
+          <div class="contact-link-label">
+            <i class="fab fa-github"></i>
+            <span class="contact-link-name">GitHub</span>
+          </div>
+          <span class="contact-link-handle">sidx0</span>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="https://twitter.com/BSidx0" target="_blank" class="contact-link-row" data-cursor>
+          <div class="contact-link-label">
+            <i class="fab fa-twitter"></i>
+            <span class="contact-link-name">Twitter</span>
+          </div>
+          <span class="contact-link-handle">@BSidx0</span>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="#" class="contact-link-row" data-cursor>
+          <div class="contact-link-label">
+            <i class="fas fa-file-arrow-down"></i>
+            <span class="contact-link-name">Download CV</span>
+          </div>
+          <span class="contact-link-handle">coming soon</span>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="contact-footer">
+      <div class="contact-footer-logo">SB</div>
+      <div class="contact-footer-copy">Built with code &amp; craft — 0x...</div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ─────────────────────────────────────────────
+// CURSOR
+// ─────────────────────────────────────────────
+const dot  = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx + 'px';
+  dot.style.top  = my + 'px';
+});
+(function trackRing() {
+  rx += (mx - rx) * 0.11;
+  ry += (my - ry) * 0.11;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(trackRing);
+})();
+
+// ─────────────────────────────────────────────
+// SCROLL PROGRESS
+// ─────────────────────────────────────────────
+const prog = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  prog.style.width = pct + '%';
+}, { passive: true });
+
+// ─────────────────────────────────────────────
+// NAV: scroll behaviour + active link
+// ─────────────────────────────────────────────
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+  // Active link
+  document.querySelectorAll('[data-section]').forEach(link => {
+    const sec = document.getElementById(link.dataset.section);
+    if (!sec) return;
+    const r = sec.getBoundingClientRect();
+    link.classList.toggle('active', r.top <= window.innerHeight/2 && r.bottom >= window.innerHeight/2);
+  });
+}, { passive: true });
+
+// Smooth scroll nav
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (!t) return;
+    e.preventDefault();
+    t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ─────────────────────────────────────────────
+// SPLASH
+// ─────────────────────────────────────────────
+const GREETINGS = [
+  { text: 'Hello',       lang: 'English' },
+  { text: 'नमस्ते',       lang: 'Hindi'   },
+  { text: 'Hola',        lang: 'Spanish' },
+  { text: 'வணக்கம்',      lang: 'Tamil'   },
+  { text: 'నమస్కారం',     lang: 'Telugu'  },
+  { text: 'مرحبا',       lang: 'Arabic'  },
+];
+
+const splashEl   = document.getElementById('splash');
+const wordEl     = document.getElementById('splash-word');
+const langEl     = document.getElementById('splash-lang');
+const dotsEls    = document.querySelectorAll('.sdot');
+let splashIdx    = 0;
+let splashDone   = false;
+
+function exitSplash() {
+  if (splashDone) return;
+  splashDone = true;
+  clearInterval(splashIv);
+  splashEl.classList.add('out');
+  setTimeout(() => splashEl.remove(), 800);
+}
+
+function nextGreeting() {
+  if (splashDone) return;
+  splashIdx++;
+  if (splashIdx >= GREETINGS.length) { exitSplash(); return; }
+
+  // Animate out
+  wordEl.classList.add('word-exit');
+  setTimeout(() => {
+    wordEl.textContent = GREETINGS[splashIdx].text;
+    langEl.textContent = GREETINGS[splashIdx].lang;
+    wordEl.className = '';
+    wordEl.style.animation = 'none';
+    void wordEl.offsetWidth; // reflow
+    wordEl.style.animation = '';
+    wordEl.style.animation = 'wordIn 0.5s cubic-bezier(.22,1,.36,1) both';
+    // dots
+    dotsEls.forEach((d, i) => d.classList.toggle('active', i === splashIdx));
+  }, 280);
+}
+
+const splashIv = setInterval(nextGreeting, 1100);
+splashEl.addEventListener('click', exitSplash);
+window.addEventListener('wheel',      exitSplash, { once: true });
+window.addEventListener('touchstart', exitSplash, { once: true });
+
+// ─────────────────────────────────────────────
+// ANIMATED COUNTERS
+// ─────────────────────────────────────────────
+const counters = document.querySelectorAll('[data-count]');
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el  = e.target;
+    const end = parseInt(el.dataset.count);
+    const sfx = el.dataset.suffix || '';
+    let cur = 0;
+    const step = () => {
+      cur += Math.max(1, Math.ceil(end / 35));
+      if (cur >= end) { el.textContent = end + sfx; return; }
+      el.textContent = cur + sfx;
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    countObs.unobserve(el);
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => countObs.observe(c));
+
+// ─────────────────────────────────────────────
+// HERO BOX — mouse parallax
+// ─────────────────────────────────────────────
+const heroBox = document.getElementById('hero-box');
+if (heroBox) {
+  document.addEventListener('mousemove', e => {
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    const dx = (e.clientX - cx) / cx;
+    const dy = (e.clientY - cy) / cy;
+    ['s1','s2','s3','s4','s5'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) {
+        const depth = (i + 1) * 6;
+        el.style.transform = `translate(${dx * depth}px, ${dy * depth}px)`;
+      }
+    });
+  });
+}
+
+// ─────────────────────────────────────────────
+// SCROLL-TRIGGERED REVEAL
+// ─────────────────────────────────────────────
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.project-item, .skill-card, .contact-link-row').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  revealObs.observe(el);
+});
+
+// stagger skill cards
+document.querySelectorAll('.skill-card').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.07) + 's';
+});
+document.querySelectorAll('.project-item').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.1) + 's';
+});
+</script>
+</body>
+</html>
