@@ -22,47 +22,76 @@
 
 html {font-size: 75%; }
 
-.section-arrows{
-  position:fixed;
-  right:30px;
-  bottom:40px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-  z-index:1000;
+.scroll-buttons {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 999;
 }
 
-.section-arrows button{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  border:1px solid rgba(0,0,0,0.1);
-  background:rgba(255,255,255,0.7);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
+.scroll-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  /* Water look */
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
-  cursor:pointer;
-  transition:all .25s ease;
+  box-shadow:
+    inset 0 4px 8px rgba(255,255,255,0.6),
+    inset 0 -6px 10px rgba(0,0,0,0.1),
+    0 8px 20px rgba(0,0,0,0.15);
+
+  transition: all 0.3s cubic-bezier(.23,1,.32,1);
+  position: relative;
+  overflow: hidden;
 }
 
-.section-arrows button i{
-  font-size:18px;
-  transition:transform .2s ease;
+/* Floating animation */
+.scroll-btn {
+  animation: floatBubble 4s ease-in-out infinite;
 }
 
-.section-arrows button:hover{
-  background:rgba(255,255,255,0.9);
-  transform:translateY(-3px);
+.scroll-btn:nth-child(2) {
+  animation-delay: 1.5s;
 }
 
-.section-arrows button:hover i{
-  transform:scale(1.15);
+@keyframes floatBubble {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
 }
 
+/* Hover pop */
+.scroll-btn:hover {
+  transform: scale(1.1);
+  box-shadow:
+    inset 0 6px 12px rgba(255,255,255,0.8),
+    inset 0 -8px 14px rgba(0,0,0,0.15),
+    0 12px 30px rgba(0,0,0,0.2);
+}
+
+/* Optional glossy highlight */
+.scroll-btn::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  width: 20px;
+  height: 12px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  filter: blur(4px);
+  opacity: 0.7;
+}
 
 body {
   font-family: 'DM Sans', sans-serif;
@@ -129,7 +158,6 @@ body:has(a:hover, button:hover, [data-cursor]:hover) #cursor-ring {
 }
 #splash.out { opacity: 0; transform: scale(1.06); pointer-events: none; }
 
-/* grid lines on splash */
 #splash::before {
   content: '';
   position: absolute; inset: 0;
@@ -188,7 +216,6 @@ body:has(a:hover, button:hover, [data-cursor]:hover) #cursor-ring {
   color: rgba(255,255,255,0.2); text-transform: uppercase;
 }
 
-/* red accent line */
 #splash-line {
   position: absolute; bottom: 0; left: 0;
   height: 3px; background: var(--rust);
@@ -249,7 +276,6 @@ section {
   scroll-margin-top: 72px;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-
 }
 
 /* ── HERO ────────────────────────────────── */
@@ -295,7 +321,6 @@ section {
 }
 .hero-bio strong { color: var(--ink); font-weight: 600; }
 
-/* Contact links under bio */
 .hero-contacts {
   display: flex; flex-direction: column; gap: 4px;
   margin-top: 32px;
@@ -313,7 +338,6 @@ section {
 .hero-contact-link i { color: var(--rust); font-size: 0.9rem; width: 16px; }
 .hero-contact-link:hover { color: var(--rust); padding-left: 10px; }
 
-/* Hero right — decorative box */
 .hero-visual {
   position: relative;
   height: 420px;
@@ -323,17 +347,15 @@ section {
   font-family:'Bebas Neue';
   font-size:clamp(4rem,10vw,9rem);
   line-height:.9;
-  white-space:nowrap;   /* keeps name in one line */
+  white-space:nowrap;
 }
 .hero-header{
   display:flex;
-  align-items:flex-end;   /* aligns box with text baseline */
+  align-items:flex-end;
   gap:24px;
-  flex-wrap:nowrap;       /* prevents SB from jumping above */
+  flex-wrap:nowrap;
 }
 
-
-/* Floaters in hero box */
 .sym {
   position: absolute;
   font-family: 'DM Mono', monospace;
@@ -352,7 +374,7 @@ section {
   to   { opacity:1; transform:translateY(0); }
 }
 
-/* ── HORIZONTAL MARQUEE DIVIDER ──────────── */
+/* ── MARQUEE ─────────────────────────────── */
 .marquee-wrap {
   overflow: hidden;
   border-top: 1.5px solid var(--ink);
@@ -408,6 +430,8 @@ section {
   transition: padding-left 0.4s cubic-bezier(.23,1,.32,1);
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  color: inherit;
 }
 .project-item::before {
   content: ''; position: absolute; left: 0; top: 0; bottom: 0;
@@ -429,11 +453,17 @@ section {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
   letter-spacing: 0.05em; flex: 1; padding: 0 24px;
 }
+.project-tags {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
+}
 .project-tag {
   font-family: 'DM Mono', monospace;
   font-size: 0.65rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--muted);
   border: 1px solid var(--sand); padding: 5px 12px;
+}
+.project-tag.accent {
+  border-color: var(--rust); color: var(--rust);
 }
 .project-arrow {
   width: 40px; height: 40px;
@@ -444,6 +474,13 @@ section {
 }
 .project-item:hover .project-arrow {
   background: var(--ink); color: var(--cream); border-color: var(--ink);
+}
+
+/* Project meta line */
+.project-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; color: var(--muted);
+  letter-spacing: 0.1em; margin-top: 4px;
 }
 
 /* ── SKILLS ──────────────────────────────── */
@@ -493,12 +530,10 @@ section {
   text-transform: uppercase; color: var(--ink);
 }
 
-/* Stats row */
 .stats-row {
   display: flex; gap: 48px; margin-top: 56px;
   flex-wrap: wrap;
 }
-.stat-item {}
 .stat-num {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 4rem; line-height: 1; color: var(--ink);
@@ -540,7 +575,6 @@ section {
   border-bottom: 1px solid rgba(255,255,255,0.08);
   text-decoration: none;
   transition: padding-left 0.35s cubic-bezier(.23,1,.32,1);
-  group: true;
 }
 .contact-link-row:hover { padding-left: 14px; }
 .contact-link-label {
@@ -586,20 +620,13 @@ section {
   text-transform: uppercase; color: rgba(255,255,255,0.2);
 }
 
-/* ── FLOATING DECORATIVE SYMBOLS ─────────── */
+/* ── DECORATIVE ──────────────────────────── */
 .decor {
   position: absolute; font-family: 'DM Mono', monospace;
   pointer-events: none; user-select: none;
   color: var(--rust); opacity: 0.12;
   animation: floatSym 10s ease-in-out infinite;
   font-size: 3.5rem;
-}
-
-/* ── HORIZONTAL RULE DIVIDER ─────────────── */
-.ruled-line {
-  width: 100%; height: 1.5px;
-  background: linear-gradient(90deg, var(--rust), transparent);
-  margin: 60px 0;
 }
 
 /* ── RESPONSIVE ──────────────────────────── */
@@ -617,34 +644,29 @@ section {
   .section-heading { font-size: 4rem; }
   .hero-name { font-size: 5rem; }
   #hero { padding-top: 48px; }
+  .project-tags { display: none; }
 }
 </style>
 </head>
 <body>
 
-<!-- Cursor -->
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 
-<div class="section-arrows">
-  <button id="arrowUp">
+<div class="scroll-buttons">
+  <button id="scroll-btn-up" class="scroll-btn">
     <i class="fa-solid fa-chevron-up"></i>
   </button>
 
-  <button id="arrowDown">
+  <button id="scroll-btn-down" class="scroll-btn">
     <i class="fa-solid fa-chevron-down"></i>
   </button>
 </div>
 
-
-
-<!-- Noise -->
 <div id="noise"></div>
-
-<!-- Progress -->
 <div id="progress"></div>
 
-<!-- ── SPLASH ── -->
+<!-- SPLASH -->
 <div id="splash">
   <div id="splash-word">Hello</div>
   <div id="splash-lang">English</div>
@@ -660,7 +682,7 @@ section {
   <div id="splash-hint">click to skip</div>
 </div>
 
-<!-- ── NAV ── -->
+<!-- NAV -->
 <nav id="nav">
   <a href="#hero" class="nav-logo">SB</a>
   <div class="nav-right">
@@ -674,9 +696,8 @@ section {
   </div>
 </nav>
 
-<!-- ── HERO ── -->
+<!-- HERO -->
 <section id="hero">
-  <!-- Decorative symbols -->
   <span class="decor" style="top:12%;right:6%;font-size:4rem;animation-delay:0s">✦</span>
   <span class="decor" style="top:60%;right:3%;font-size:2.5rem;animation-delay:1.5s">★</span>
   <span class="decor" style="bottom:15%;left:2%;font-size:3rem;animation-delay:3s">◈</span>
@@ -692,7 +713,6 @@ section {
     </div>
 
     <div class="hero-grid">
-      <!-- Left -->
       <div>
         <p class="hero-bio">
           Self-taught dev from <strong>Maharashtra, India</strong>.
@@ -701,7 +721,6 @@ section {
           Also a <strong>graphic designer</strong> — because code and craft go hand in hand.
         </p>
 
-        <!-- Social links below bio -->
         <div class="hero-contacts">
           <a href="mailto:siddhantbayas5@gmail.com" class="hero-contact-link" data-cursor>
             <i class="fas fa-envelope"></i>
@@ -718,27 +737,25 @@ section {
         </div>
       </div>
 
-      <!-- Right: decorative visual box -->
       <div class="hero-visual">
         <div class="hero-box" id="hero-box">
-<span class="sym" style="top:8%;left:42%;font-size:2.8rem;animation-delay:1.2s">✧</span>
-<span class="sym" style="bottom:12%;left:35%;font-size:3rem;animation-delay:2.7s">✶</span>
-<span class="sym" style="top:38%;left:6%;font-size:2.2rem;animation-delay:0.6s">◇</span>
-<span class="sym" style="bottom:30%;right:6%;font-size:2.6rem;animation-delay:3.5s">⬢</span>
-<span class="sym" style="top:18%;right:45%;font-size:2rem;animation-delay:1.9s">❖</span>
-<span class="sym" style="bottom:22%;left:48%;font-size:3.2rem;animation-delay:2.2s">✹</span>
-<span class="sym" style="top:62%;right:38%;font-size:2.4rem;animation-delay:0.4s">✺</span>
-<span class="sym" style="bottom:6%;right:30%;font-size:1.9rem;animation-delay:3.1s">✷</span>
-<span class="sym" style="top:45%;left:30%;font-size:2.1rem;animation-delay:1.5s">✸</span>
-<span class="sym" style="top:70%;right:12%;font-size:2.3rem;animation-delay:2.8s">⟡</span>
-
+          <span class="sym" style="top:8%;left:42%;font-size:2.8rem;animation-delay:1.2s">✧</span>
+          <span class="sym" style="bottom:12%;left:35%;font-size:3rem;animation-delay:2.7s">✶</span>
+          <span class="sym" style="top:38%;left:6%;font-size:2.2rem;animation-delay:0.6s">◇</span>
+          <span class="sym" style="bottom:30%;right:6%;font-size:2.6rem;animation-delay:3.5s">⬢</span>
+          <span class="sym" style="top:18%;right:45%;font-size:2rem;animation-delay:1.9s">❖</span>
+          <span class="sym" style="bottom:22%;left:48%;font-size:3.2rem;animation-delay:2.2s">✹</span>
+          <span class="sym" style="top:62%;right:38%;font-size:2.4rem;animation-delay:0.4s">✺</span>
+          <span class="sym" style="bottom:6%;right:30%;font-size:1.9rem;animation-delay:3.1s">✷</span>
+          <span class="sym" style="top:45%;left:30%;font-size:2.1rem;animation-delay:1.5s">✸</span>
+          <span class="sym" style="top:70%;right:12%;font-size:2.3rem;animation-delay:2.8s">⟡</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── MARQUEE DIVIDER ── -->
+<!-- MARQUEE -->
 <div class="marquee-wrap">
   <div class="marquee-track" id="marqueeTrack">
     <span class="marquee-item">Full Stack Dev <span class="dot">✦</span></span>
@@ -760,7 +777,7 @@ section {
   </div>
 </div>
 
-<!-- ── PROJECTS ── -->
+<!-- PROJECTS -->
 <section id="projects">
   <span class="decor" style="top:10%;right:4%;animation-delay:0.5s;font-size:3rem">★</span>
   <span class="decor" style="bottom:20%;left:2%;animation-delay:2s;font-size:2.5rem;color:#0D0D0D;opacity:0.06">✦</span>
@@ -770,24 +787,34 @@ section {
     <h2 class="section-heading">Recent<br>Projects</h2>
 
     <div id="project-list">
-      <div class="project-item" data-cursor>
+
+      <!-- 0xPortfolio -->
+      <a href="https://github.com/sidx0/0xportfolio" target="_blank" class="project-item" data-cursor>
         <span class="project-num">01</span>
-        <span class="project-name">Coming Soon</span>
-        <span class="project-tag">In Progress</span>
+        <div style="flex:1;padding:0 24px;">
+          <div class="project-name">0xPortfolio</div>
+          <div class="project-meta">Multi-chain DeFi dashboard · Ethereum &amp; Arbitrum</div>
+        </div>
+        <div class="project-tags">
+          <span class="project-tag accent">Web3</span>
+          <span class="project-tag">Next.js 14</span>
+          <span class="project-tag">wagmi</span>
+          <span class="project-tag">Prisma</span>
+        </div>
         <span class="project-arrow">↗</span>
-      </div>
+      </a>
+
     </div>
   </div>
 </section>
 
-<!-- ── SKILLS ── -->
+<!-- SKILLS -->
 <section id="skills">
   <span class="decor" style="top:8%;right:3%;animation-delay:1s;font-size:4rem">◈</span>
   <span class="decor" style="bottom:12%;right:5%;animation-delay:2.5s;font-size:2.5rem">⬡</span>
 
   <div style="max-width:1200px;width:100%;margin:0 auto;">
     <div class="skills-outer">
-      <!-- Left text -->
       <div>
         <div class="section-label">02 — Skills</div>
         <h2 class="section-heading" style="font-size:clamp(3rem,6vw,5.5rem)">Skills<br>&amp; Tech</h2>
@@ -808,66 +835,81 @@ section {
         </div>
       </div>
 
-      <!-- Right cards -->
-<div class="skills-cards">
+      <div class="skills-cards">
 
-  <!-- Python -->
   <div class="skill-card" data-cursor>
     <div class="skill-icon-wrap">
-      <i class="fa-brands fa-python"></i>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
+           alt="Python"
+           height="35"
+           width="35"
+           class="skill-icon" />
     </div>
     <div class="skill-name">Python</div>
   </div>
 
-  <!-- JavaScript -->
   <div class="skill-card" data-cursor>
     <div class="skill-icon-wrap">
-      <i class="fa-brands fa-js"></i>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg"
+           alt="JavaScript"
+           height="35"
+           width="35"
+           class="skill-icon" />
     </div>
     <div class="skill-name">JavaScript</div>
   </div>
 
-  <!-- Node.js -->
   <div class="skill-card" data-cursor>
     <div class="skill-icon-wrap">
-      <i class="fa-brands fa-node-js"></i>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
+           alt="Node.js"
+           height="35"
+           width="35"
+           class="skill-icon" />
     </div>
     <div class="skill-name">Node.js</div>
   </div>
 
-  <!-- React -->
   <div class="skill-card" data-cursor>
     <div class="skill-icon-wrap">
-      <i class="fa-brands fa-react"></i>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"
+           alt="React"
+           height="35"
+           width="35"
+           class="skill-icon" />
     </div>
     <div class="skill-name">React</div>
   </div>
 
-  <!-- TypeScript -->
   <div class="skill-card" data-cursor>
     <div class="skill-icon-wrap">
-      <i class="fa-brands fa-typescript"></i>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+           alt="TypeScript"
+           height="35"
+           width="35"
+           class="skill-icon" />
     </div>
     <div class="skill-name">TypeScript</div>
   </div>
 
-  <!-- Figma -->
   <div class="skill-card" data-cursor>
     <div class="skill-icon-wrap">
-      <i class="fa-brands fa-figma"></i>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg"
+           alt="Figma"
+           height="35"
+           width="35"
+           class="skill-icon" />
     </div>
     <div class="skill-name">Figma</div>
   </div>
 
 </div>
-
-
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── CONTACT ── -->
+<!-- CONTACT -->
 <section id="contact">
   <span class="decor" style="top:10%;right:4%;animation-delay:1s;font-size:4rem;color:var(--cream);opacity:0.04">★</span>
   <span class="decor" style="bottom:20%;left:2%;animation-delay:2s;font-size:3rem;color:var(--cream);opacity:0.04">✦</span>
@@ -927,14 +969,10 @@ section {
 </section>
 
 <script>
-
-// ─────────────────────────────────────────────
 // CURSOR
-// ─────────────────────────────────────────────
 const dot  = document.getElementById('cursor-dot');
 const ring = document.getElementById('cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
-
 document.addEventListener('mousemove', e => {
   mx = e.clientX; my = e.clientY;
   dot.style.left = mx + 'px';
@@ -948,22 +986,17 @@ document.addEventListener('mousemove', e => {
   requestAnimationFrame(trackRing);
 })();
 
-// ─────────────────────────────────────────────
 // SCROLL PROGRESS
-// ─────────────────────────────────────────────
 const prog = document.getElementById('progress');
 window.addEventListener('scroll', () => {
   const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
   prog.style.width = pct + '%';
 }, { passive: true });
 
-// ─────────────────────────────────────────────
-// NAV: scroll behaviour + active link
-// ─────────────────────────────────────────────
+// NAV
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
-  // Active link
   document.querySelectorAll('[data-section]').forEach(link => {
     const sec = document.getElementById(link.dataset.section);
     if (!sec) return;
@@ -972,7 +1005,6 @@ window.addEventListener('scroll', () => {
   });
 }, { passive: true });
 
-// Smooth scroll nav
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     const t = document.querySelector(a.getAttribute('href'));
@@ -982,9 +1014,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
-// ─────────────────────────────────────────────
 // SPLASH
-// ─────────────────────────────────────────────
 const GREETINGS = [
   { text: 'Hello',       lang: 'English' },
   { text: 'नमस्ते',       lang: 'Hindi'   },
@@ -993,13 +1023,11 @@ const GREETINGS = [
   { text: 'నమస్కారం',     lang: 'Telugu'  },
   { text: 'مرحبا',       lang: 'Arabic'  },
 ];
-
-const splashEl   = document.getElementById('splash');
-const wordEl     = document.getElementById('splash-word');
-const langEl     = document.getElementById('splash-lang');
-const dotsEls    = document.querySelectorAll('.sdot');
-let splashIdx    = 0;
-let splashDone   = false;
+const splashEl = document.getElementById('splash');
+const wordEl   = document.getElementById('splash-word');
+const langEl   = document.getElementById('splash-lang');
+const dotsEls  = document.querySelectorAll('.sdot');
+let splashIdx  = 0, splashDone = false;
 
 function exitSplash() {
   if (splashDone) return;
@@ -1013,83 +1041,72 @@ function nextGreeting() {
   if (splashDone) return;
   splashIdx++;
   if (splashIdx >= GREETINGS.length) { exitSplash(); return; }
-
-  // Animate out
   wordEl.classList.add('word-exit');
   setTimeout(() => {
     wordEl.textContent = GREETINGS[splashIdx].text;
     langEl.textContent = GREETINGS[splashIdx].lang;
     wordEl.className = '';
     wordEl.style.animation = 'none';
-    void wordEl.offsetWidth; // reflow
-    wordEl.style.animation = '';
+    void wordEl.offsetWidth;
     wordEl.style.animation = 'wordIn 0.5s cubic-bezier(.22,1,.36,1) both';
-    // dots
     dotsEls.forEach((d, i) => d.classList.toggle('active', i === splashIdx));
   }, 280);
 }
-
 const splashIv = setInterval(nextGreeting, 1100);
 splashEl.addEventListener('click', exitSplash);
 window.addEventListener('wheel',      exitSplash, { once: true });
 window.addEventListener('touchstart', exitSplash, { once: true });
 
-// ─────────────────────────────────────────────
 // ARROW NAV
-// ─────────────────────────────────────────────
 const sections = Array.from(document.querySelectorAll("section"));
 let currentIndex = 0;
 
-function updateCurrentSection(){
+const btnUp = document.getElementById("scroll-btn-up");
+const btnDown = document.getElementById("scroll-btn-down");
+
+function updateCurrentSection() {
   const mid = window.scrollY + window.innerHeight / 2;
-  sections.forEach((section, i)=>{
-    if(
+
+  sections.forEach((section, i) => {
+    if (
       mid >= section.offsetTop &&
       mid < section.offsetTop + section.offsetHeight
-    ){
+    ) {
       currentIndex = i;
     }
   });
 
-  document.getElementById("arrowUp").style.opacity = currentIndex === 0 ? 0.3 : 1;
-  document.getElementById("arrowDown").style.opacity = currentIndex === sections.length - 1 ? 0.3 : 1;
+  btnUp.style.opacity = currentIndex === 0 ? 0.3 : 1;
+  btnDown.style.opacity =
+    currentIndex === sections.length - 1 ? 0.3 : 1;
 }
 
-function goToSection(index){
-  if(index < 0 || index >= sections.length) return;
+function goToSection(index) {
+  if (index < 0 || index >= sections.length) return;
 
   window.scrollTo({
     top: sections[index].offsetTop,
-    behavior: "smooth"
+    behavior: "smooth",
   });
 }
 
-document.getElementById("arrowUp").addEventListener("click", ()=>{
-  goToSection(currentIndex - 1);
-});
-
-document.getElementById("arrowDown").addEventListener("click", ()=>{
-  goToSection(currentIndex + 1);
-});
+btnUp.addEventListener("click", () => goToSection(currentIndex - 1));
+btnDown.addEventListener("click", () => goToSection(currentIndex + 1));
 
 window.addEventListener("scroll", updateCurrentSection);
 updateCurrentSection();
 
-// ─────────────────────────────────────────────
-// ANIMATED COUNTERS
-// ─────────────────────────────────────────────
+// COUNTERS
 const counters = document.querySelectorAll('[data-count]');
 const countObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (!e.isIntersecting) return;
-    const el  = e.target;
-    const end = parseInt(el.dataset.count);
-    const sfx = el.dataset.suffix || '';
+    const el = e.target, end = parseInt(el.dataset.count);
     let cur = 0;
     const step = () => {
       cur += Math.max(1, Math.ceil(end / 35));
-      if (cur >= end) { el.textContent = end + sfx; return; }
-      el.textContent = cur + sfx;
+      if (cur >= end) { el.textContent = end; return; }
+      el.textContent = cur;
       requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
@@ -1098,29 +1115,7 @@ const countObs = new IntersectionObserver(entries => {
 }, { threshold: 0.5 });
 counters.forEach(c => countObs.observe(c));
 
-// ─────────────────────────────────────────────
-// HERO BOX — mouse parallax
-// ─────────────────────────────────────────────
-const heroBox = document.getElementById('hero-box');
-if (heroBox) {
-  document.addEventListener('mousemove', e => {
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight / 2;
-    const dx = (e.clientX - cx) / cx;
-    const dy = (e.clientY - cy) / cy;
-    ['s1','s2','s3','s4','s5'].forEach((id, i) => {
-      const el = document.getElementById(id);
-      if (el) {
-        const depth = (i + 1) * 6;
-        el.style.transform = `translate(${dx * depth}px, ${dy * depth}px)`;
-      }
-    });
-  });
-}
-
-// ─────────────────────────────────────────────
-// SCROLL-TRIGGERED REVEAL
-// ─────────────────────────────────────────────
+// SCROLL REVEAL
 const revealObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -1137,8 +1132,6 @@ document.querySelectorAll('.project-item, .skill-card, .contact-link-row').forEa
   el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
   revealObs.observe(el);
 });
-
-// stagger skill cards
 document.querySelectorAll('.skill-card').forEach((el, i) => {
   el.style.transitionDelay = (i * 0.07) + 's';
 });
